@@ -39,7 +39,7 @@ jobs:
           moon install
 
       - name: moon check
-        run: moon check --target native --deny-warn
+        run: moon check --deny-warn
 
       - name: format check
         run: |
@@ -94,7 +94,7 @@ jobs:
           moon install
 
       - name: moon check
-        run: moon check --target native --deny-warn
+        run: moon check --deny-warn
 
       - name: format check
         run: |
