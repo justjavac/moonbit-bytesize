@@ -1,0 +1,99 @@
+package "justjavac/bytesize"
+
+// Values
+const GB : UInt64 = 1_000_000_000
+
+const GIB : UInt64 = 1_073_741_824
+
+const KB : UInt64 = 1_000
+
+const KIB : UInt64 = 1_024
+
+const MB : UInt64 = 1_000_000
+
+const MIB : UInt64 = 1_048_576
+
+const PB : UInt64 = 1_000_000_000_000_000
+
+const PIB : UInt64 = 1_125_899_906_842_624
+
+const TB : UInt64 = 1_000_000_000_000
+
+const TIB : UInt64 = 1_099_511_627_776
+
+fn gb(UInt64) -> UInt64
+
+fn gib(UInt64) -> UInt64
+
+fn ideal_unit_no_std(Double, UInt64) -> Int
+
+fn kb(UInt64) -> UInt64
+
+fn kib(UInt64) -> UInt64
+
+fn mb(UInt64) -> UInt64
+
+fn mib(UInt64) -> UInt64
+
+fn pb(UInt64) -> UInt64
+
+fn pib(UInt64) -> UInt64
+
+fn tb(UInt64) -> UInt64
+
+fn tib(UInt64) -> UInt64
+
+// Types and methods
+pub struct ByteSize {
+  size : UInt64
+}
+fn ByteSize::as_u64(Self) -> UInt64
+fn ByteSize::b(UInt64) -> Self
+fn ByteSize::debug_string(Self) -> String
+fn ByteSize::display(Self) -> Display
+fn ByteSize::gb(UInt64) -> Self
+fn ByteSize::gib(UInt64) -> Self
+fn ByteSize::kb(UInt64) -> Self
+fn ByteSize::kib(UInt64) -> Self
+fn ByteSize::mb(UInt64) -> Self
+fn ByteSize::mib(UInt64) -> Self
+fn ByteSize::pb(UInt64) -> Self
+fn ByteSize::pib(UInt64) -> Self
+fn ByteSize::tb(UInt64) -> Self
+fn ByteSize::tib(UInt64) -> Self
+fn ByteSize::to_string(Self) -> String
+impl Compare for ByteSize
+impl Default for ByteSize
+impl Eq for ByteSize
+impl Hash for ByteSize
+impl Show for ByteSize
+
+pub struct Display {
+  byte_size : UInt64
+  format : Format
+}
+fn Display::iec(Self) -> Self
+fn Display::iec_short(Self) -> Self
+fn Display::new(UInt64) -> Self
+fn Display::si(Self) -> Self
+fn Display::si_short(Self) -> Self
+fn Display::to_string(Self, precision~ : Int = ..) -> String
+impl Show for Display
+
+pub enum Format {
+  Iec
+  IecShort
+  Si
+  SiShort
+}
+fn Format::unit(Self) -> UInt64
+fn Format::unit_base(Self) -> Double
+fn Format::unit_prefixes(Self) -> String
+fn Format::unit_separator(Self) -> String
+fn Format::unit_suffix(Self) -> String
+impl Show for Format
+
+// Type aliases
+
+// Traits
+
