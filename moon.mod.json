@@ -12,5 +12,5 @@
     "human-readable"
   ],
   "description": "an utility for human-readable bytes representations",
-  "source": ""
+  "source": "src"
 }
