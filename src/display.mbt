@@ -228,7 +228,7 @@ test "to_string_short" {
 fn assert_to_string(
   expected : String,
   byte_size : ByteSize,
-  format : Format
+  format : Format,
 ) -> Unit raise {
   let display = Display::{ byte_size: byte_size.as_u64(), format }
   assert_eq(expected, display.to_string())
