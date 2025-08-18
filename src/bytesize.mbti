@@ -1,3 +1,4 @@
+// Generated using `moon info`, DON'T EDIT IT
 package "justjavac/bytesize"
 
 // Values
@@ -43,6 +44,8 @@ fn tb(UInt64) -> UInt64
 
 fn tib(UInt64) -> UInt64
 
+// Errors
+
 // Types and methods
 pub struct ByteSize {
   size : UInt64
@@ -77,7 +80,7 @@ fn Display::iec_short(Self) -> Self
 fn Display::new(UInt64) -> Self
 fn Display::si(Self) -> Self
 fn Display::si_short(Self) -> Self
-fn Display::to_string(Self, precision~ : Int = ..) -> String
+fn Display::to_string(Self, precision? : Int) -> String
 impl Show for Display
 
 pub enum Format {
