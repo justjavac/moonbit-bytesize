@@ -138,9 +138,7 @@ pub fn Display::to_string(self : Display, precision~ : Int = 1) -> String {
   } else {
     let size = bytes.to_double()
     let exp = ideal_unit_std(size, unit_base)
-    let unit_prefix = Int::to_char(unit_prefixes.charcode_at(exp - 1))
-      .unwrap()
-      .to_string()
+    let unit_prefix = Int::to_char(unit_prefixes[exp - 1]).unwrap().to_string()
     let unit_power = unit.to_double().pow(exp.to_double())
     let value = size / unit_power
 
