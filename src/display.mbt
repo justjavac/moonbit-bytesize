@@ -136,7 +136,7 @@ fn ideal_unit_std(size : Double, unit_base : Double) -> Int {
 /// assert_eq("556.2 GB", @bytesize.ByteSize::gib(518).display().si().to_string())
 /// assert_eq("518G", @bytesize.ByteSize::gib(518).display().iec_short().to_string())
 /// ```
-pub fn Display::to_string(self : Display, precision? : Int = 1) -> String {
+pub fn Display::to_string(self : Display, precision~ : Int = 1) -> String {
   let bytes = self.byte_size
   let unit = self.format.unit()
   let unit_base = self.format.unit_base()
