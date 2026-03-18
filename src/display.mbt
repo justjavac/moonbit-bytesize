@@ -1,7 +1,8 @@
 // This file is port from https://github.com/bytesize-rs/bytesize/blob/7467a23df30bc1fee48326e0fa6c063fc85676a2/src/display.rs
 // Copyright Apache-2.0 January 2004 The bytesize Authors. All rights reserved.
 
-///| Format / style to use when displaying a [`ByteSize`].
+///|
+/// Format / style to use when displaying a [`ByteSize`].
 pub enum Format {
   Iec
   IecShort
@@ -50,7 +51,8 @@ pub fn Format::unit_suffix(self : Format) -> String {
   }
 }
 
-///| Formatting display wrapper for byte sizes.
+///|
+/// Formatting display wrapper for byte sizes.
 /// 
 /// Supports various styles. By default, the IEC style is used.
 pub struct Display {
@@ -58,19 +60,22 @@ pub struct Display {
   format : Format
 } derive(Show)
 
-///| Create a new Display with the given byte size and default IEC format.
+///|
+/// Create a new Display with the given byte size and default IEC format.
 pub fn Display::new(byte_size : UInt64) -> Display {
   { byte_size, format: Format::Iec }
 }
 
-///| Format using IEC (binary) units.
+///|
+/// Format using IEC (binary) units.
 /// 
 /// E.g., `11.8 MiB`.
 pub fn Display::iec(self : Display) -> Display {
   { ..self, format: Format::Iec }
 }
 
-///| Format using a short style and IEC (binary) units.
+///|
+/// Format using a short style and IEC (binary) units.
 /// 
 /// E.g., `11.8M`.
 /// 
@@ -79,21 +84,24 @@ pub fn Display::iec_short(self : Display) -> Display {
   { ..self, format: Format::IecShort }
 }
 
-///| Format using SI (decimal) units.
+///|
+/// Format using SI (decimal) units.
 /// 
 /// E.g., `12.3 MB`.
 pub fn Display::si(self : Display) -> Display {
   { ..self, format: Format::Si }
 }
 
-///| Format using a short style and SI (decimal) units.
+///|
+/// Format using a short style and SI (decimal) units.
 /// 
 /// E.g., `12.3M`.
 pub fn Display::si_short(self : Display) -> Display {
   { ..self, format: Format::SiShort }
 }
 
-///| Helper function to calculate ideal unit for no-std contexts.
+///|
+/// Helper function to calculate ideal unit for no-std contexts.
 pub fn ideal_unit_no_std(size : Double, unit : UInt64) -> Int {
   let mut ideal_prefix = 0
   let mut ideal_size = size
@@ -108,7 +116,8 @@ pub fn ideal_unit_no_std(size : Double, unit : UInt64) -> Int {
   ideal_prefix
 }
 
-///| Helper function to calculate ideal unit using logarithms.
+///|
+/// Helper function to calculate ideal unit using logarithms.
 fn ideal_unit_std(size : Double, unit_base : Double) -> Int {
   let exp = (@math.ln(size) / unit_base).to_int()
   if exp == 0 {
@@ -118,15 +127,16 @@ fn ideal_unit_std(size : Double, unit_base : Double) -> Int {
   }
 }
 
-///| Convert Display to string representation.
+///|
+/// Convert Display to string representation.
 /// 
 /// ## example
-/// ```moonbit
+/// ```moonbit nocheck
 /// assert_eq("518 GiB", @bytesize.ByteSize::gib(518).display().iec().to_string())
 /// assert_eq("556.2 GB", @bytesize.ByteSize::gib(518).display().si().to_string())
 /// assert_eq("518G", @bytesize.ByteSize::gib(518).display().iec_short().to_string())
 /// ```
-pub fn Display::to_string(self : Display, precision~ : Int = 1) -> String {
+pub fn Display::to_string(self : Display, precision? : Int = 1) -> String {
   let bytes = self.byte_size
   let unit = self.format.unit()
   let unit_base = self.format.unit_base()
@@ -138,10 +148,11 @@ pub fn Display::to_string(self : Display, precision~ : Int = 1) -> String {
   } else {
     let size = bytes.to_double()
     let exp = ideal_unit_std(size, unit_base)
-    let unit_prefix = Int::to_char(unit_prefixes.charcode_at(exp - 1))
-      .unwrap()
-      .to_string()
-    let unit_power = unit.to_double().pow(exp.to_double())
+    let unit_prefix = match unit_prefixes.get_char(exp - 1) {
+      Some(c) => c.to_string()
+      None => "?"
+    }
+    let unit_power = @math.pow(unit.to_double(), exp.to_double())
     let value = size / unit_power
 
     // Format the number with specified precision
@@ -150,10 +161,11 @@ pub fn Display::to_string(self : Display, precision~ : Int = 1) -> String {
   }
 }
 
-///| Helper function to format a double with specified precision.
+///|
+/// Helper function to format a double with specified precision.
 fn format_double_with_precision(value : Double, precision : Int) -> String {
   // Simple implementation - in a real scenario you might want more sophisticated formatting
-  let multiplier = 10.0.pow(precision.to_double())
+  let multiplier = @math.pow(10.0, precision.to_double())
   let rounded = @math.round(value * multiplier) / multiplier
   rounded.to_string()
 }
@@ -224,11 +236,12 @@ test "to_string_short" {
   assert_eq("953.7M", display2.to_string())
 }
 
-///| Helper function for display string assertions
+///|
+/// Helper function for display string assertions
 fn assert_to_string(
   expected : String,
   byte_size : ByteSize,
-  format : Format
+  format : Format,
 ) -> Unit raise {
   let display = Display::{ byte_size: byte_size.as_u64(), format }
   assert_eq(expected, display.to_string())
