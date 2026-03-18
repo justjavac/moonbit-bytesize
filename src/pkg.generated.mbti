@@ -1,0 +1,102 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "justjavac/bytesize"
+
+// Values
+pub const GB : UInt64 = 1_000_000_000
+
+pub const GIB : UInt64 = 1_073_741_824
+
+pub const KB : UInt64 = 1_000
+
+pub const KIB : UInt64 = 1_024
+
+pub const MB : UInt64 = 1_000_000
+
+pub const MIB : UInt64 = 1_048_576
+
+pub const PB : UInt64 = 1_000_000_000_000_000
+
+pub const PIB : UInt64 = 1_125_899_906_842_624
+
+pub const TB : UInt64 = 1_000_000_000_000
+
+pub const TIB : UInt64 = 1_099_511_627_776
+
+pub fn gb(UInt64) -> UInt64
+
+pub fn gib(UInt64) -> UInt64
+
+pub fn ideal_unit_no_std(Double, UInt64) -> Int
+
+pub fn kb(UInt64) -> UInt64
+
+pub fn kib(UInt64) -> UInt64
+
+pub fn mb(UInt64) -> UInt64
+
+pub fn mib(UInt64) -> UInt64
+
+pub fn pb(UInt64) -> UInt64
+
+pub fn pib(UInt64) -> UInt64
+
+pub fn tb(UInt64) -> UInt64
+
+pub fn tib(UInt64) -> UInt64
+
+// Errors
+
+// Types and methods
+pub struct ByteSize {
+  size : UInt64
+}
+pub fn ByteSize::as_u64(Self) -> UInt64
+pub fn ByteSize::b(UInt64) -> Self
+pub fn ByteSize::debug_string(Self) -> String
+pub fn ByteSize::display(Self) -> Display
+pub fn ByteSize::gb(UInt64) -> Self
+pub fn ByteSize::gib(UInt64) -> Self
+pub fn ByteSize::kb(UInt64) -> Self
+pub fn ByteSize::kib(UInt64) -> Self
+pub fn ByteSize::mb(UInt64) -> Self
+pub fn ByteSize::mib(UInt64) -> Self
+pub fn ByteSize::pb(UInt64) -> Self
+pub fn ByteSize::pib(UInt64) -> Self
+pub fn ByteSize::tb(UInt64) -> Self
+pub fn ByteSize::tib(UInt64) -> Self
+pub fn ByteSize::to_string(Self) -> String
+pub impl Compare for ByteSize
+pub impl Default for ByteSize
+pub impl Eq for ByteSize
+pub impl Hash for ByteSize
+pub impl Show for ByteSize
+
+pub struct Display {
+  byte_size : UInt64
+  format : Format
+}
+pub fn Display::iec(Self) -> Self
+pub fn Display::iec_short(Self) -> Self
+pub fn Display::new(UInt64) -> Self
+pub fn Display::si(Self) -> Self
+pub fn Display::si_short(Self) -> Self
+pub fn Display::to_string(Self, precision? : Int) -> String
+pub impl Show for Display
+
+pub enum Format {
+  Iec
+  IecShort
+  Si
+  SiShort
+}
+pub fn Format::unit(Self) -> UInt64
+pub fn Format::unit_base(Self) -> Double
+pub fn Format::unit_prefixes(Self) -> String
+pub fn Format::unit_separator(Self) -> String
+pub fn Format::unit_suffix(Self) -> String
+pub impl Show for Format
+
+// Type aliases
+
+// Traits
+

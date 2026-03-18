@@ -3,116 +3,143 @@
 
 ///| `ByteSize` is a semantic wrapper for byte count representations.
 
-///| Number of bytes in 1 kilobyte.
+///|
+/// Number of bytes in 1 kilobyte.
 pub const KB : UInt64 = 1_000
 
-///| Number of bytes in 1 megabyte.
+///|
+/// Number of bytes in 1 megabyte.
 pub const MB : UInt64 = 1_000_000
 
-///| Number of bytes in 1 gigabyte.
+///|
+/// Number of bytes in 1 gigabyte.
 pub const GB : UInt64 = 1_000_000_000
 
-///| Number of bytes in 1 terabyte.
+///|
+/// Number of bytes in 1 terabyte.
 pub const TB : UInt64 = 1_000_000_000_000
 
-///| Number of bytes in 1 petabyte.
+///|
+/// Number of bytes in 1 petabyte.
 pub const PB : UInt64 = 1_000_000_000_000_000
 
-///| Number of bytes in 1 kibibyte.
+///|
+/// Number of bytes in 1 kibibyte.
 pub const KIB : UInt64 = 1_024
 
-///| Number of bytes in 1 mebibyte.
+///|
+/// Number of bytes in 1 mebibyte.
 pub const MIB : UInt64 = 1_048_576
 
-///| Number of bytes in 1 gibibyte.
+///|
+/// Number of bytes in 1 gibibyte.
 pub const GIB : UInt64 = 1_073_741_824
 
-///| Number of bytes in 1 tebibyte.
+///|
+/// Number of bytes in 1 tebibyte.
 pub const TIB : UInt64 = 1_099_511_627_776
 
-///| Number of bytes in 1 pebibyte.
+///|
+/// Number of bytes in 1 pebibyte.
 pub const PIB : UInt64 = 1_125_899_906_842_624
 
-///| IEC (binary) units.
+///|
+/// IEC (binary) units.
 ///
 /// See <https://en.wikipedia.org/wiki/Kilobyte>.
 const UNITS_IEC : String = "KMGTPE"
 
-///| SI (decimal) units.
+///|
+/// SI (decimal) units.
 ///
 /// See <https://en.wikipedia.org/wiki/Kilobyte>.
 const UNITS_SI : String = "kMGTPE"
 
-///| `ln(1024) ~= 6.931`
+///|
+/// `ln(1024) ~= 6.931`
 const LN_KIB : Double = 6.931_471_805_599_453
 
-///| `ln(1000) ~= 6.908`
+///|
+/// `ln(1000) ~= 6.908`
 const LN_KB : Double = 6.907_755_278_982_137
 
-///| Converts a quantity of kilobytes to bytes.
+///|
+/// Converts a quantity of kilobytes to bytes.
 pub fn kb(size : UInt64) -> UInt64 {
   size * KB
 }
 
-///| Converts a quantity of kibibytes to bytes.
+///|
+/// Converts a quantity of kibibytes to bytes.
 pub fn kib(size : UInt64) -> UInt64 {
   size * KIB
 }
 
-///| Converts a quantity of megabytes to bytes.
+///|
+/// Converts a quantity of megabytes to bytes.
 pub fn mb(size : UInt64) -> UInt64 {
   size * MB
 }
 
-///| Converts a quantity of mebibytes to bytes.
+///|
+/// Converts a quantity of mebibytes to bytes.
 pub fn mib(size : UInt64) -> UInt64 {
   size * MIB
 }
 
-///| Converts a quantity of gigabytes to bytes.
+///|
+/// Converts a quantity of gigabytes to bytes.
 pub fn gb(size : UInt64) -> UInt64 {
   size * GB
 }
 
-///| Converts a quantity of gibibytes to bytes.
+///|
+/// Converts a quantity of gibibytes to bytes.
 pub fn gib(size : UInt64) -> UInt64 {
   size * GIB
 }
 
-///| Converts a quantity of terabytes to bytes.
+///|
+/// Converts a quantity of terabytes to bytes.
 pub fn tb(size : UInt64) -> UInt64 {
   size * TB
 }
 
-///| Converts a quantity of tebibytes to bytes.
+///|
+/// Converts a quantity of tebibytes to bytes.
 pub fn tib(size : UInt64) -> UInt64 {
   size * TIB
 }
 
-///| Converts a quantity of petabytes to bytes.
+///|
+/// Converts a quantity of petabytes to bytes.
 pub fn pb(size : UInt64) -> UInt64 {
   size * PB
 }
 
-///| Converts a quantity of pebibytes to bytes.
+///|
+/// Converts a quantity of pebibytes to bytes.
 pub fn pib(size : UInt64) -> UInt64 {
   size * PIB
 }
 
-///| Byte size representation.
+///|
+/// Byte size representation.
 pub struct ByteSize {
   size : UInt64
 } derive(Show, Eq, Compare, Hash, Default)
 
-///| Constructs a byte size wrapper from a quantity of bytes.
+///|
+/// Constructs a byte size wrapper from a quantity of bytes.
 pub fn ByteSize::b(size : UInt64) -> ByteSize {
   ByteSize::{ size, }
 }
 
-///| Constructs a byte size wrapper from a quantity of kilobytes.
+///|
+/// Constructs a byte size wrapper from a quantity of kilobytes.
 /// 
 /// ## example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let size = ByteSize::kb(1)
 /// assert_eq(size.as_u64(), 1000UL)
 /// assert_true(@bytesize.ByteSize::kib(4) > @bytesize.ByteSize::kb(4))
@@ -121,83 +148,99 @@ pub fn ByteSize::kb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * KB }
 }
 
-///| Constructs a byte size wrapper from a quantity of kibibytes.
+///|
+/// Constructs a byte size wrapper from a quantity of kibibytes.
 pub fn ByteSize::kib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * KIB }
 }
 
-///| Constructs a byte size wrapper from a quantity of megabytes.
+///|
+/// Constructs a byte size wrapper from a quantity of megabytes.
 pub fn ByteSize::mb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * MB }
 }
 
-///| Constructs a byte size wrapper from a quantity of mebibytes.
+///|
+/// Constructs a byte size wrapper from a quantity of mebibytes.
 pub fn ByteSize::mib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * MIB }
 }
 
-///| Constructs a byte size wrapper from a quantity of gigabytes.
+///|
+/// Constructs a byte size wrapper from a quantity of gigabytes.
 pub fn ByteSize::gb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * GB }
 }
 
-///| Constructs a byte size wrapper from a quantity of gibibytes.
+///|
+/// Constructs a byte size wrapper from a quantity of gibibytes.
 pub fn ByteSize::gib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * GIB }
 }
 
-///| Constructs a byte size wrapper from a quantity of terabytes.
+///|
+/// Constructs a byte size wrapper from a quantity of terabytes.
 pub fn ByteSize::tb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * TB }
 }
 
-///| Constructs a byte size wrapper from a quantity of tebibytes.
+///|
+/// Constructs a byte size wrapper from a quantity of tebibytes.
 pub fn ByteSize::tib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * TIB }
 }
 
-///| Constructs a byte size wrapper from a quantity of petabytes.
+///|
+/// Constructs a byte size wrapper from a quantity of petabytes.
 pub fn ByteSize::pb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * PB }
 }
 
-///| Constructs a byte size wrapper from a quantity of pebibytes.
+///|
+/// Constructs a byte size wrapper from a quantity of pebibytes.
 pub fn ByteSize::pib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * PIB }
 }
 
-///| Returns byte count.
+///|
+/// Returns byte count.
 pub fn ByteSize::as_u64(self : ByteSize) -> UInt64 {
   self.size
 }
 
-///| Returns a formatting display wrapper.
+///|
+/// Returns a formatting display wrapper.
 pub fn ByteSize::display(self : ByteSize) -> Display {
   Display::new(self.size)
 }
 
-///| Convert ByteSize to string using default IEC format.
+///|
+/// Convert ByteSize to string using default IEC format.
 pub fn ByteSize::to_string(self : ByteSize) -> String {
   self.display().to_string()
 }
 
-///| Debug representation showing both formatted size and raw bytes.
+///|
+/// Debug representation showing both formatted size and raw bytes.
 pub fn ByteSize::debug_string(self : ByteSize) -> String {
   "\{self.to_string()} (\{self.size} bytes)"
 }
 
-///| Addition: ByteSize + ByteSize = ByteSize
-impl Add for ByteSize with op_add(self, rhs : ByteSize) -> ByteSize {
+///|
+/// Addition: ByteSize + ByteSize = ByteSize
+impl Add for ByteSize with add(self, rhs : ByteSize) -> ByteSize {
   ByteSize::{ size: rhs.size + self.size }
 }
 
-///| Subtraction: ByteSize - ByteSize = ByteSize
-impl Sub for ByteSize with op_sub(self, rhs : ByteSize) -> ByteSize {
+///|
+/// Subtraction: ByteSize - ByteSize = ByteSize
+impl Sub for ByteSize with sub(self, rhs : ByteSize) -> ByteSize {
   ByteSize::{ size: self.size - rhs.size }
 }
 
-///| Multiplication: ByteSize * ByteSize = ByteSize
-impl Mul for ByteSize with op_mul(self, rhs : ByteSize) -> ByteSize {
+///|
+/// Multiplication: ByteSize * ByteSize = ByteSize
+impl Mul for ByteSize with mul(self, rhs : ByteSize) -> ByteSize {
   ByteSize::{ size: rhs.size * self.size }
 }
 
@@ -312,7 +355,7 @@ test "test_edge_cases" {
 }
 
 ///|
-test "test_default" {
+test "test_default_method" {
   let default_size = ByteSize::default()
   assert_eq(default_size, ByteSize::b(0))
 }
