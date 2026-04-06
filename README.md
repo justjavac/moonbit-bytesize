@@ -1,5 +1,7 @@
 # justjavac/bytesize
 
+[![coverage](https://img.shields.io/codecov/c/github/justjavac/moonbit-bytesize/main?label=coverage)](https://codecov.io/gh/justjavac/moonbit-bytesize)
+
 `ByteSize` is a semantic wrapper for byte count representations.
 
 > This file is port from
@@ -29,14 +31,9 @@ assert_eq("556.2 GB", @bytesize.ByteSize::gib(518).display().si().to_string())
 assert_eq("518G", @bytesize.ByteSize::gib(518).display().iec_short().to_string())
 ```
 
-Arithmetic operations are supported.
+Precision can be tuned for display output.
 
 ```moonbit
-let x = @bytesize.ByteSize::kb(100)
-let y = @bytesize.ByteSize::mb(1)
-let plus = x + y
-println(plus)
-
-let minus = y - x
-println(minus)
+assert_eq("954 MiB", @bytesize.ByteSize::gb(1).display().to_string(precision=0))
+assert_eq("953.67432 MiB", @bytesize.ByteSize::gb(1).display().to_string(precision=5))
 ```
