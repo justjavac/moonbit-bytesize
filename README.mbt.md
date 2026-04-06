@@ -1,5 +1,7 @@
 # `justjavac/bytesize`
 
+[![coverage](https://img.shields.io/codecov/c/github/justjavac/moonbit-bytesize/main?label=coverage)](https://codecov.io/gh/justjavac/moonbit-bytesize)
+
 `@bytesize` provides a small `ByteSize` wrapper for converting exact byte counts
 and formatting them with either IEC or SI units.
 
