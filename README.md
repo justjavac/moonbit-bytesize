@@ -10,7 +10,6 @@
 Add `justjavac/bytesize` to your dependencies:
 
 ```shell
-moon update
 moon add justjavac/bytesize
 ```
 
