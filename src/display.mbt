@@ -2,7 +2,10 @@
 // Copyright Apache-2.0 January 2004 The bytesize Authors. All rights reserved.
 
 ///|
-/// Format / style to use when displaying a [`ByteSize`].
+/// Formatting style used when rendering a `ByteSize`.
+///
+/// `Format` controls the unit family (IEC or SI), whether separators are kept,
+/// and how suffixes such as `B` or `iB` are produced.
 pub enum Format {
   Iec
   IecShort
@@ -11,6 +14,10 @@ pub enum Format {
 } derive(Show)
 
 ///|
+/// Returns the numeric unit step for this format.
+///
+/// IEC formats scale by `1024`, while SI formats scale by `1000`. `Display`
+/// uses this value to decide when to promote bytes to the next unit.
 pub fn Format::unit(self : Format) -> UInt64 {
   match self {
     Format::Iec | Format::IecShort => KIB
@@ -19,6 +26,10 @@ pub fn Format::unit(self : Format) -> UInt64 {
 }
 
 ///|
+/// Returns the logarithmic base used for unit selection.
+///
+/// This value matches the natural logarithm of the format's unit step and is
+/// used by `Display::to_string` to choose the best prefix efficiently.
 pub fn Format::unit_base(self : Format) -> Double {
   match self {
     Format::Iec | Format::IecShort => LN_KIB
@@ -27,6 +38,10 @@ pub fn Format::unit_base(self : Format) -> Double {
 }
 
 ///|
+/// Returns the sequence of unit prefixes for this format.
+///
+/// IEC formats use uppercase binary prefixes such as `K`, `M`, and `G`, while
+/// SI formats use the decimal sequence beginning with lowercase `k`.
 pub fn Format::unit_prefixes(self : Format) -> String {
   match self {
     Format::Iec | Format::IecShort => UNITS_IEC
@@ -35,6 +50,10 @@ pub fn Format::unit_prefixes(self : Format) -> String {
 }
 
 ///|
+/// Returns the separator inserted between the numeric value and unit text.
+///
+/// Long formats keep a space, such as `1 KiB` or `1 MB`, while the short
+/// formats omit it to produce strings such as `1K` and `1M`.
 pub fn Format::unit_separator(self : Format) -> String {
   match self {
     Format::Iec | Format::Si => " "
@@ -43,6 +62,10 @@ pub fn Format::unit_separator(self : Format) -> String {
 }
 
 ///|
+/// Returns the suffix appended after the unit prefix.
+///
+/// IEC long format uses `iB`, SI long format uses `B`, and the short formats
+/// omit the suffix entirely.
 pub fn Format::unit_suffix(self : Format) -> String {
   match self {
     Format::Iec => "iB"
@@ -52,56 +75,65 @@ pub fn Format::unit_suffix(self : Format) -> String {
 }
 
 ///|
-/// Formatting display wrapper for byte sizes.
-/// 
-/// Supports various styles. By default, the IEC style is used.
+/// Formatting wrapper for byte sizes.
+///
+/// `Display` stores the raw byte count together with the selected `Format`.
+/// Newly created instances default to IEC formatting until you switch styles.
 pub struct Display {
   byte_size : UInt64
   format : Format
 } derive(Show)
 
 ///|
-/// Create a new Display with the given byte size and default IEC format.
+/// Creates a display wrapper with the default IEC format.
+///
+/// The provided `byte_size` is stored unchanged. Call `si`, `si_short`, or
+/// `iec_short` on the returned value when you want a different rendering style.
 pub fn Display::new(byte_size : UInt64) -> Display {
   { byte_size, format: Format::Iec }
 }
 
 ///|
-/// Format using IEC (binary) units.
-/// 
-/// E.g., `11.8 MiB`.
+/// Switches the display wrapper to IEC long format.
+///
+/// This produces output such as `11.8 MiB`, with a separating space and the
+/// binary `iB` suffix.
 pub fn Display::iec(self : Display) -> Display {
   { ..self, format: Format::Iec }
 }
 
 ///|
-/// Format using a short style and IEC (binary) units.
-/// 
-/// E.g., `11.8M`.
-/// 
-/// Designed to produce output compatible with `sort -h`.
+/// Switches the display wrapper to IEC short format.
+///
+/// This produces compact output such as `11.8M`. The short form is convenient
+/// for narrow UI surfaces and shell output that is sorted with `sort -h`.
 pub fn Display::iec_short(self : Display) -> Display {
   { ..self, format: Format::IecShort }
 }
 
 ///|
-/// Format using SI (decimal) units.
-/// 
-/// E.g., `12.3 MB`.
+/// Switches the display wrapper to SI long format.
+///
+/// This produces output such as `12.3 MB`, which matches the decimal unit
+/// system commonly used by storage devices and transfer rates.
 pub fn Display::si(self : Display) -> Display {
   { ..self, format: Format::Si }
 }
 
 ///|
-/// Format using a short style and SI (decimal) units.
-/// 
-/// E.g., `12.3M`.
+/// Switches the display wrapper to SI short format.
+///
+/// This produces compact decimal strings such as `12.3M`, which are useful
+/// when you want SI semantics but minimal visual noise.
 pub fn Display::si_short(self : Display) -> Display {
   { ..self, format: Format::SiShort }
 }
 
 ///|
-/// Helper function to calculate ideal unit for no-std contexts.
+/// Calculates the 1-based unit index using repeated division only.
+///
+/// This helper mirrors the format-selection logic without relying on logarithms,
+/// which makes it useful in restricted environments or for validation tests.
 pub fn ideal_unit_no_std(size : Double, unit : UInt64) -> Int {
   let mut ideal_prefix = 0
   let mut ideal_size = size
@@ -117,7 +149,7 @@ pub fn ideal_unit_no_std(size : Double, unit : UInt64) -> Int {
 }
 
 ///|
-/// Helper function to calculate ideal unit using logarithms.
+/// Calculates the same unit index as `ideal_unit_no_std` by using logarithms.
 fn ideal_unit_std(size : Double, unit_base : Double) -> Int {
   let exp = (@math.ln(size) / unit_base).to_int()
   if exp == 0 {
@@ -128,14 +160,11 @@ fn ideal_unit_std(size : Double, unit_base : Double) -> Int {
 }
 
 ///|
-/// Convert Display to string representation.
-/// 
-/// ## example
-/// ```moonbit nocheck
-/// assert_eq("518 GiB", @bytesize.ByteSize::gib(518).display().iec().to_string())
-/// assert_eq("556.2 GB", @bytesize.ByteSize::gib(518).display().si().to_string())
-/// assert_eq("518G", @bytesize.ByteSize::gib(518).display().iec_short().to_string())
-/// ```
+/// Formats the stored byte count as a human-readable string.
+///
+/// Values smaller than the first unit are rendered as bytes, while larger
+/// values are promoted to the most suitable unit for the active `Format`.
+/// `precision` controls how many decimal places are kept after rounding.
 pub fn Display::to_string(self : Display, precision? : Int = 1) -> String {
   let bytes = self.byte_size
   let unit = self.format.unit()
@@ -162,7 +191,7 @@ pub fn Display::to_string(self : Display, precision? : Int = 1) -> String {
 }
 
 ///|
-/// Helper function to format a double with specified precision.
+/// Rounds a floating-point value to the requested number of decimal places.
 fn format_double_with_precision(value : Double, precision : Int) -> String {
   // Simple implementation - in a real scenario you might want more sophisticated formatting
   let multiplier = @math.pow(10.0, precision.to_double())
@@ -237,7 +266,27 @@ test "to_string_short" {
 }
 
 ///|
-/// Helper function for display string assertions
+test "format_accessors" {
+  let iec = Format::Iec
+  let iec_short = Format::IecShort
+  let si = Format::Si
+  let si_short = Format::SiShort
+
+  assert_eq(iec.unit(), KIB)
+  assert_eq(si.unit(), KB)
+  assert_true(iec.unit_base() > 6.9)
+  assert_true(si.unit_base() > 6.8)
+  assert_eq(iec.unit_prefixes(), "KMGTPE")
+  assert_eq(si_short.unit_prefixes(), "kMGTPE")
+  assert_eq(iec_short.unit_separator(), "")
+  assert_eq(si.unit_separator(), " ")
+  assert_eq(iec.unit_suffix(), "iB")
+  assert_eq(si.unit_suffix(), "B")
+  assert_eq(si_short.unit_suffix(), "")
+}
+
+///|
+/// Keeps the display-format assertions concise across the formatting tests.
 fn assert_to_string(
   expected : String,
   byte_size : ByteSize,

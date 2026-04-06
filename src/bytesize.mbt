@@ -1,7 +1,8 @@
 // This file is port from https://github.com/bytesize-rs/bytesize/blob/7467a23df30bc1fee48326e0fa6c063fc85676a2/src/lib.rs
 // Copyright Apache-2.0 January 2004 The bytesize Authors. All rights reserved.
 
-///| `ByteSize` is a semantic wrapper for byte count representations.
+///|
+/// `ByteSize` is a semantic wrapper for byte count representations.
 
 ///|
 /// Number of bytes in 1 kilobyte.
@@ -64,164 +65,239 @@ const LN_KIB : Double = 6.931_471_805_599_453
 const LN_KB : Double = 6.907_755_278_982_137
 
 ///|
-/// Converts a quantity of kilobytes to bytes.
+/// Converts a decimal kilobyte count into a raw byte count.
+///
+/// This helper uses the SI definition (`1 kB = 1000 bytes`) and returns the
+/// primitive `UInt64` value directly. Use `ByteSize::kb` when you want the same
+/// converted value wrapped in `ByteSize`.
 pub fn kb(size : UInt64) -> UInt64 {
   size * KB
 }
 
 ///|
-/// Converts a quantity of kibibytes to bytes.
+/// Converts a binary kibibyte count into a raw byte count.
+///
+/// This helper uses the IEC definition (`1 KiB = 1024 bytes`) and returns the
+/// primitive `UInt64` value directly. Use `ByteSize::kib` when you want the
+/// converted value as a `ByteSize`.
 pub fn kib(size : UInt64) -> UInt64 {
   size * KIB
 }
 
 ///|
-/// Converts a quantity of megabytes to bytes.
+/// Converts a decimal megabyte count into a raw byte count.
+///
+/// This helper uses the SI definition (`1 MB = 1_000_000 bytes`) and is useful
+/// when an API expects a primitive byte count instead of a `ByteSize` wrapper.
 pub fn mb(size : UInt64) -> UInt64 {
   size * MB
 }
 
 ///|
-/// Converts a quantity of mebibytes to bytes.
+/// Converts a binary mebibyte count into a raw byte count.
+///
+/// This helper uses the IEC definition (`1 MiB = 1_048_576 bytes`) and returns
+/// a plain `UInt64`. Use `ByteSize::mib` when you want formatting helpers too.
 pub fn mib(size : UInt64) -> UInt64 {
   size * MIB
 }
 
 ///|
-/// Converts a quantity of gigabytes to bytes.
+/// Converts a decimal gigabyte count into a raw byte count.
+///
+/// The input is interpreted with SI units (`1 GB = 1_000_000_000 bytes`), so it
+/// matches storage sizes that are commonly reported by disks and networks.
 pub fn gb(size : UInt64) -> UInt64 {
   size * GB
 }
 
 ///|
-/// Converts a quantity of gibibytes to bytes.
+/// Converts a binary gibibyte count into a raw byte count.
+///
+/// The input is interpreted with IEC units (`1 GiB = 1_073_741_824 bytes`),
+/// which is the unit family typically used for memory-style measurements.
 pub fn gib(size : UInt64) -> UInt64 {
   size * GIB
 }
 
 ///|
-/// Converts a quantity of terabytes to bytes.
+/// Converts a decimal terabyte count into a raw byte count.
+///
+/// This helper keeps the result as a primitive `UInt64`, making it convenient
+/// when you only need the exact byte total and not the `ByteSize` API.
 pub fn tb(size : UInt64) -> UInt64 {
   size * TB
 }
 
 ///|
-/// Converts a quantity of tebibytes to bytes.
+/// Converts a binary tebibyte count into a raw byte count.
+///
+/// This helper applies IEC scaling (`1 TiB = 1024 GiB`) and returns the exact
+/// number of bytes without wrapping it in `ByteSize`.
 pub fn tib(size : UInt64) -> UInt64 {
   size * TIB
 }
 
 ///|
-/// Converts a quantity of petabytes to bytes.
+/// Converts a decimal petabyte count into a raw byte count.
+///
+/// This helper is useful for large SI quantities such as storage capacities and
+/// data transfer reports that are expressed in base-10 units.
 pub fn pb(size : UInt64) -> UInt64 {
   size * PB
 }
 
 ///|
-/// Converts a quantity of pebibytes to bytes.
+/// Converts a binary pebibyte count into a raw byte count.
+///
+/// This helper uses IEC scaling and returns the exact byte count as `UInt64`,
+/// which is useful for large memory-style quantities.
 pub fn pib(size : UInt64) -> UInt64 {
   size * PIB
 }
 
 ///|
-/// Byte size representation.
+/// Semantic wrapper around a raw byte count.
+///
+/// `ByteSize` stores the canonical value in bytes while exposing constructors,
+/// comparisons, arithmetic traits, and formatting helpers for SI and IEC output.
 pub struct ByteSize {
   size : UInt64
 } derive(Show, Eq, Compare, Hash, Default)
 
 ///|
-/// Constructs a byte size wrapper from a quantity of bytes.
+/// Wraps an exact byte count in `ByteSize`.
+///
+/// This constructor does not perform any unit conversion. Use it when you
+/// already have a byte count and want access to `ByteSize` formatting,
+/// comparison, and arithmetic helpers.
 pub fn ByteSize::b(size : UInt64) -> ByteSize {
   ByteSize::{ size, }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of kilobytes.
-/// 
-/// ## example
-/// ```moonbit nocheck
-/// let size = ByteSize::kb(1)
-/// assert_eq(size.as_u64(), 1000UL)
-/// assert_true(@bytesize.ByteSize::kib(4) > @bytesize.ByteSize::kb(4))
-/// ```
+/// Constructs a `ByteSize` from a decimal kilobyte count.
+///
+/// The input follows the SI definition (`1 kB = 1000 bytes`). This is the
+/// wrapper-producing counterpart to `kb`, so it is convenient when you want the
+/// converted value together with `ByteSize` display and comparison helpers.
 pub fn ByteSize::kb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * KB }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of kibibytes.
+/// Constructs a `ByteSize` from a binary kibibyte count.
+///
+/// The input follows the IEC definition (`1 KiB = 1024 bytes`). Choose this
+/// constructor when you want binary units and the ergonomic `ByteSize` API.
 pub fn ByteSize::kib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * KIB }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of megabytes.
+/// Constructs a `ByteSize` from a decimal megabyte count.
+///
+/// The input is interpreted in SI units, making it a good fit for disk, file,
+/// and transfer sizes that are normally reported in base-10 units.
 pub fn ByteSize::mb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * MB }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of mebibytes.
+/// Constructs a `ByteSize` from a binary mebibyte count.
+///
+/// The input is interpreted in IEC units, which is useful for measurements that
+/// are naturally expressed as powers of two, such as memory sizes.
 pub fn ByteSize::mib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * MIB }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of gigabytes.
+/// Constructs a `ByteSize` from a decimal gigabyte count.
+///
+/// This constructor uses SI scaling and returns a value that can be compared,
+/// formatted, or combined with other `ByteSize` values.
 pub fn ByteSize::gb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * GB }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of gibibytes.
+/// Constructs a `ByteSize` from a binary gibibyte count.
+///
+/// This constructor uses IEC scaling and is useful when you want to preserve
+/// the distinction between binary sizes and decimal storage labels.
 pub fn ByteSize::gib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * GIB }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of terabytes.
+/// Constructs a `ByteSize` from a decimal terabyte count.
+///
+/// Use this constructor for very large SI quantities when you still want to
+/// keep the value strongly typed as `ByteSize`.
 pub fn ByteSize::tb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * TB }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of tebibytes.
+/// Constructs a `ByteSize` from a binary tebibyte count.
+///
+/// This constructor preserves IEC semantics for very large binary quantities
+/// while still returning a regular `ByteSize` wrapper.
 pub fn ByteSize::tib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * TIB }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of petabytes.
+/// Constructs a `ByteSize` from a decimal petabyte count.
+///
+/// This is the SI counterpart to `ByteSize::pib` and is appropriate for
+/// extremely large base-10 byte quantities.
 pub fn ByteSize::pb(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * PB }
 }
 
 ///|
-/// Constructs a byte size wrapper from a quantity of pebibytes.
+/// Constructs a `ByteSize` from a binary pebibyte count.
+///
+/// This constructor uses IEC scaling for extremely large binary quantities and
+/// keeps the result available through the `ByteSize` API.
 pub fn ByteSize::pib(size : UInt64) -> ByteSize {
   ByteSize::{ size: size * PIB }
 }
 
 ///|
-/// Returns byte count.
+/// Returns the underlying byte count as a primitive `UInt64`.
+///
+/// This is useful when an external API expects a raw integer or when you need
+/// to perform calculations outside the `ByteSize` wrapper.
 pub fn ByteSize::as_u64(self : ByteSize) -> UInt64 {
   self.size
 }
 
 ///|
-/// Returns a formatting display wrapper.
+/// Returns a formatting wrapper for this byte size.
+///
+/// The returned `Display` starts in IEC mode, so calling `to_string` on it will
+/// produce output like `1 KiB` unless you switch to an SI variant first.
 pub fn ByteSize::display(self : ByteSize) -> Display {
   Display::new(self.size)
 }
 
 ///|
-/// Convert ByteSize to string using default IEC format.
+/// Formats this value using the default IEC display style.
+///
+/// This is equivalent to `self.display().to_string()` and produces strings such
+/// as `1 KiB`, `419 MiB`, or `2 PiB`.
 pub fn ByteSize::to_string(self : ByteSize) -> String {
   self.display().to_string()
 }
 
 ///|
-/// Debug representation showing both formatted size and raw bytes.
+/// Formats this value with both human-readable text and the raw byte count.
+///
+/// The resulting string is intended for debugging and logs, where seeing the
+/// friendly unit and the exact byte total at the same time is helpful.
 pub fn ByteSize::debug_string(self : ByteSize) -> String {
   "\{self.to_string()} (\{self.size} bytes)"
 }
