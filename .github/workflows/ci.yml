@@ -9,7 +9,6 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
-          - macos-13
           - windows-latest
       fail-fast: false
     runs-on: ${{ matrix.os }}
