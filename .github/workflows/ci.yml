@@ -54,10 +54,6 @@ jobs:
         run: |
           moon test
 
-      - name: moon test --doc
-        run: |
-          moon test --doc
-
       - name: moon build
         run: |
           moon build
@@ -114,10 +110,36 @@ jobs:
         run: |
           moon test
 
-      - name: moon test --doc
-        run: |
-          moon test --doc
-
       - name: moon build
         run: |
           moon build
+
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: moon install
+        run: |
+          moon update
+          moon install
+
+      - name: Generate coverage report
+        run: |
+          moon coverage analyze -p justjavac/bytesize -- -f cobertura -o coverage.xml
+
+      - name: Upload coverage to Codecov
+        if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage.xml
+          disable_search: true
+          use_oidc: true
