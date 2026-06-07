@@ -11,7 +11,12 @@ pub enum Format {
   IecShort
   Si
   SiShort
-} derive(Show)
+} derive(Debug)
+
+///|
+pub impl Show for Format with fn to_string(self) {
+  repr(self)
+}
 
 ///|
 /// Returns the numeric unit step for this format.
@@ -20,8 +25,8 @@ pub enum Format {
 /// uses this value to decide when to promote bytes to the next unit.
 pub fn Format::unit(self : Format) -> UInt64 {
   match self {
-    Format::Iec | Format::IecShort => KIB
-    Format::Si | Format::SiShort => KB
+    Iec | IecShort => KIB
+    Si | SiShort => KB
   }
 }
 
@@ -32,8 +37,8 @@ pub fn Format::unit(self : Format) -> UInt64 {
 /// used by `Display::to_string` to choose the best prefix efficiently.
 pub fn Format::unit_base(self : Format) -> Double {
   match self {
-    Format::Iec | Format::IecShort => LN_KIB
-    Format::Si | Format::SiShort => LN_KB
+    Iec | IecShort => LN_KIB
+    Si | SiShort => LN_KB
   }
 }
 
@@ -44,8 +49,8 @@ pub fn Format::unit_base(self : Format) -> Double {
 /// SI formats use the decimal sequence beginning with lowercase `k`.
 pub fn Format::unit_prefixes(self : Format) -> String {
   match self {
-    Format::Iec | Format::IecShort => UNITS_IEC
-    Format::Si | Format::SiShort => UNITS_SI
+    Iec | IecShort => UNITS_IEC
+    Si | SiShort => UNITS_SI
   }
 }
 
@@ -56,8 +61,8 @@ pub fn Format::unit_prefixes(self : Format) -> String {
 /// formats omit it to produce strings such as `1K` and `1M`.
 pub fn Format::unit_separator(self : Format) -> String {
   match self {
-    Format::Iec | Format::Si => " "
-    Format::IecShort | Format::SiShort => ""
+    Iec | Si => " "
+    IecShort | SiShort => ""
   }
 }
 
@@ -68,9 +73,9 @@ pub fn Format::unit_separator(self : Format) -> String {
 /// omit the suffix entirely.
 pub fn Format::unit_suffix(self : Format) -> String {
   match self {
-    Format::Iec => "iB"
-    Format::Si => "B"
-    Format::IecShort | Format::SiShort => ""
+    Iec => "iB"
+    Si => "B"
+    IecShort | SiShort => ""
   }
 }
 
@@ -82,7 +87,12 @@ pub fn Format::unit_suffix(self : Format) -> String {
 pub struct Display {
   byte_size : UInt64
   format : Format
-} derive(Show)
+} derive(Debug)
+
+///|
+pub impl Show for Display with fn to_string(self) {
+  self.to_string()
+}
 
 ///|
 /// Creates a display wrapper with the default IEC format.
@@ -90,7 +100,7 @@ pub struct Display {
 /// The provided `byte_size` is stored unchanged. Call `si`, `si_short`, or
 /// `iec_short` on the returned value when you want a different rendering style.
 pub fn Display::new(byte_size : UInt64) -> Display {
-  { byte_size, format: Format::Iec }
+  { byte_size, format: Iec }
 }
 
 ///|
@@ -99,7 +109,7 @@ pub fn Display::new(byte_size : UInt64) -> Display {
 /// This produces output such as `11.8 MiB`, with a separating space and the
 /// binary `iB` suffix.
 pub fn Display::iec(self : Display) -> Display {
-  { ..self, format: Format::Iec }
+  { ..self, format: Iec }
 }
 
 ///|
@@ -108,7 +118,7 @@ pub fn Display::iec(self : Display) -> Display {
 /// This produces compact output such as `11.8M`. The short form is convenient
 /// for narrow UI surfaces and shell output that is sorted with `sort -h`.
 pub fn Display::iec_short(self : Display) -> Display {
-  { ..self, format: Format::IecShort }
+  { ..self, format: IecShort }
 }
 
 ///|
@@ -117,7 +127,7 @@ pub fn Display::iec_short(self : Display) -> Display {
 /// This produces output such as `12.3 MB`, which matches the decimal unit
 /// system commonly used by storage devices and transfer rates.
 pub fn Display::si(self : Display) -> Display {
-  { ..self, format: Format::Si }
+  { ..self, format: Si }
 }
 
 ///|
@@ -126,7 +136,7 @@ pub fn Display::si(self : Display) -> Display {
 /// This produces compact decimal strings such as `12.3M`, which are useful
 /// when you want SI semantics but minimal visual noise.
 pub fn Display::si_short(self : Display) -> Display {
-  { ..self, format: Format::SiShort }
+  { ..self, format: SiShort }
 }
 
 ///|
@@ -225,29 +235,17 @@ test "ideal_unit_selection_std_no_std_si" {
 
 ///|
 test "to_string_iec" {
-  let display = Display::{
-    byte_size: ByteSize::gib(1).as_u64(),
-    format: Format::Iec,
-  }
+  let display = Display::{ byte_size: ByteSize::gib(1).as_u64(), format: Iec }
   assert_eq("1 GiB", display.to_string())
-  let display2 = Display::{
-    byte_size: ByteSize::gb(1).as_u64(),
-    format: Format::Iec,
-  }
+  let display2 = Display::{ byte_size: ByteSize::gb(1).as_u64(), format: Iec }
   assert_eq("953.7 MiB", display2.to_string())
 }
 
 ///|
 test "to_string_si" {
-  let display = Display::{
-    byte_size: ByteSize::gib(1).as_u64(),
-    format: Format::Si,
-  }
+  let display = Display::{ byte_size: ByteSize::gib(1).as_u64(), format: Si }
   assert_eq("1.1 GB", display.to_string())
-  let display2 = Display::{
-    byte_size: ByteSize::gb(1).as_u64(),
-    format: Format::Si,
-  }
+  let display2 = Display::{ byte_size: ByteSize::gb(1).as_u64(), format: Si }
   assert_eq("1 GB", display2.to_string())
 }
 
@@ -255,12 +253,12 @@ test "to_string_si" {
 test "to_string_short" {
   let display = Display::{
     byte_size: ByteSize::gib(1).as_u64(),
-    format: Format::IecShort,
+    format: IecShort,
   }
   assert_eq("1G", display.to_string())
   let display2 = Display::{
     byte_size: ByteSize::gb(1).as_u64(),
-    format: Format::IecShort,
+    format: IecShort,
   }
   assert_eq("953.7M", display2.to_string())
 }
@@ -298,24 +296,24 @@ fn assert_to_string(
 
 ///|
 test "test_to_string_as" {
-  assert_to_string("215 B", ByteSize::b(215), Format::Iec)
-  assert_to_string("215 B", ByteSize::b(215), Format::Si)
-  assert_to_string("1 KiB", ByteSize::kib(1), Format::Iec)
-  assert_to_string("1 kB", ByteSize::kib(1), Format::Si)
-  assert_to_string("293.9 KiB", ByteSize::kb(301), Format::Iec)
-  assert_to_string("301 kB", ByteSize::kb(301), Format::Si)
-  assert_to_string("1 MiB", ByteSize::mib(1), Format::Iec)
-  assert_to_string("1 MB", ByteSize::mib(1), Format::Si)
-  assert_to_string("1.9 GiB", ByteSize::mib(1907), Format::Iec)
-  assert_to_string("2 GB", ByteSize::mib(1908), Format::Si)
-  assert_to_string("399.6 MiB", ByteSize::mb(419), Format::Iec)
-  assert_to_string("419 MB", ByteSize::mb(419), Format::Si)
-  assert_to_string("482.4 GiB", ByteSize::gb(518), Format::Iec)
-  assert_to_string("518 GB", ByteSize::gb(518), Format::Si)
-  assert_to_string("741.2 TiB", ByteSize::tb(815), Format::Iec)
-  assert_to_string("815 TB", ByteSize::tb(815), Format::Si)
-  assert_to_string("540.9 PiB", ByteSize::pb(609), Format::Iec)
-  assert_to_string("609 PB", ByteSize::pb(609), Format::Si)
+  assert_to_string("215 B", ByteSize::b(215), Iec)
+  assert_to_string("215 B", ByteSize::b(215), Si)
+  assert_to_string("1 KiB", ByteSize::kib(1), Iec)
+  assert_to_string("1 kB", ByteSize::kib(1), Si)
+  assert_to_string("293.9 KiB", ByteSize::kb(301), Iec)
+  assert_to_string("301 kB", ByteSize::kb(301), Si)
+  assert_to_string("1 MiB", ByteSize::mib(1), Iec)
+  assert_to_string("1 MB", ByteSize::mib(1), Si)
+  assert_to_string("1.9 GiB", ByteSize::mib(1907), Iec)
+  assert_to_string("2 GB", ByteSize::mib(1908), Si)
+  assert_to_string("399.6 MiB", ByteSize::mb(419), Iec)
+  assert_to_string("419 MB", ByteSize::mb(419), Si)
+  assert_to_string("482.4 GiB", ByteSize::gb(518), Iec)
+  assert_to_string("518 GB", ByteSize::gb(518), Si)
+  assert_to_string("741.2 TiB", ByteSize::tb(815), Iec)
+  assert_to_string("815 TB", ByteSize::tb(815), Si)
+  assert_to_string("540.9 PiB", ByteSize::pb(609), Iec)
+  assert_to_string("609 PB", ByteSize::pb(609), Si)
 }
 
 ///|

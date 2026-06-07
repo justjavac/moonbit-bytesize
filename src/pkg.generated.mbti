@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "justjavac/bytesize"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub const GB : UInt64 = 1_000_000_000
 
@@ -49,7 +53,7 @@ pub fn tib(UInt64) -> UInt64
 // Types and methods
 pub struct ByteSize {
   size : UInt64
-} derive(Compare, Default, Eq, Hash, Show)
+} derive(Compare, Default, Eq, Hash, @debug.Debug)
 pub fn ByteSize::as_u64(Self) -> UInt64
 pub fn ByteSize::b(UInt64) -> Self
 pub fn ByteSize::debug_string(Self) -> String
@@ -65,29 +69,32 @@ pub fn ByteSize::pib(UInt64) -> Self
 pub fn ByteSize::tb(UInt64) -> Self
 pub fn ByteSize::tib(UInt64) -> Self
 pub fn ByteSize::to_string(Self) -> String
+pub impl Show for ByteSize
 
 pub struct Display {
   byte_size : UInt64
   format : Format
-} derive(Show)
+} derive(@debug.Debug)
 pub fn Display::iec(Self) -> Self
 pub fn Display::iec_short(Self) -> Self
 pub fn Display::new(UInt64) -> Self
 pub fn Display::si(Self) -> Self
 pub fn Display::si_short(Self) -> Self
 pub fn Display::to_string(Self, precision? : Int) -> String
+pub impl Show for Display
 
 pub enum Format {
   Iec
   IecShort
   Si
   SiShort
-} derive(Show)
+} derive(@debug.Debug)
 pub fn Format::unit(Self) -> UInt64
 pub fn Format::unit_base(Self) -> Double
 pub fn Format::unit_prefixes(Self) -> String
 pub fn Format::unit_separator(Self) -> String
 pub fn Format::unit_suffix(Self) -> String
+pub impl Show for Format
 
 // Type aliases
 

@@ -1,0 +1,17 @@
+name = "justjavac/bytesize"
+
+version = "0.2.2"
+
+readme = "README.mbt.md"
+
+repository = "https://github.com/justjavac/moonbit-bytesize"
+
+license = "MIT"
+
+keywords = [ "bytesize", "byte", "size", "format", "human-readable" ]
+
+description = "an utility for human-readable bytes representations"
+
+options(
+  source: "src",
+)
