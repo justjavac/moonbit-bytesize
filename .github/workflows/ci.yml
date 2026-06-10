@@ -32,10 +32,9 @@ jobs:
         run: |
           moon version --all
 
-      - name: moon install
+      - name: moon update
         run: |
           moon update
-          moon install
 
       - name: moon check
         run: moon check --deny-warn
@@ -70,10 +69,9 @@ jobs:
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
-      - name: moon install
+      - name: moon update
         run: |
           moon update
-          moon install
 
       - name: Generate coverage report
         run: |
