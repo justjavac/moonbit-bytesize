@@ -12,6 +12,4 @@ keywords = [ "bytesize", "byte", "size", "format", "human-readable" ]
 
 description = "an utility for human-readable bytes representations"
 
-options(
-  source: "src",
-)
+source = "src"
