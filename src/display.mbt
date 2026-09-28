@@ -12,11 +12,13 @@ pub enum Format {
   Si
   SiShort
 } derive(Debug)
+pub extend Format with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
 pub impl Show for Format with fn to_string(self) {
   repr(self)
 }
+pub extend Format with Show::{to_string, output}
 
 ///|
 /// Returns the numeric unit step for this format.
@@ -88,11 +90,13 @@ pub struct Display {
   byte_size : UInt64
   format : Format
 } derive(Debug)
+pub extend Display with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
 pub impl Show for Display with fn to_string(self) {
   self.to_string()
 }
+pub extend Display with Show::{output}
 
 ///|
 /// Creates a display wrapper with the default IEC format.

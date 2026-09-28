@@ -164,11 +164,17 @@ pub fn pib(size : UInt64) -> UInt64 {
 pub struct ByteSize {
   size : UInt64
 } derive(Debug, Eq, Compare, Hash, Default)
+pub extend ByteSize with Eq::{not_equal, equal}
+pub extend ByteSize with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+pub extend ByteSize with Hash::{hash, hash_combine}
+pub extend ByteSize with Default::{default}
+pub extend ByteSize with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
 pub impl Show for ByteSize with fn to_string(self) {
   self.display().to_string()
 }
+pub extend ByteSize with Show::{output}
 
 ///|
 /// Wraps an exact byte count in `ByteSize`.
