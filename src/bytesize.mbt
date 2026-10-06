@@ -164,16 +164,28 @@ pub fn pib(size : UInt64) -> UInt64 {
 pub struct ByteSize {
   size : UInt64
 } derive(Debug, Eq, Compare, Hash, Default)
+
+///|
 pub extend ByteSize with Eq::{not_equal, equal}
+
+///|
 pub extend ByteSize with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
 pub extend ByteSize with Hash::{hash, hash_combine}
+
+///|
 pub extend ByteSize with Default::{default}
+
+///|
 pub extend ByteSize with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
 pub impl Show for ByteSize with fn to_string(self) {
   self.display().to_string()
 }
+
+///|
 pub extend ByteSize with Show::{output}
 
 ///|
@@ -193,7 +205,7 @@ pub fn ByteSize::b(size : UInt64) -> ByteSize {
 /// wrapper-producing counterpart to `kb`, so it is convenient when you want the
 /// converted value together with `ByteSize` display and comparison helpers.
 pub fn ByteSize::kb(size : UInt64) -> ByteSize {
-  { size: size * KB }
+  { size: size * KB, }
 }
 
 ///|
@@ -202,7 +214,7 @@ pub fn ByteSize::kb(size : UInt64) -> ByteSize {
 /// The input follows the IEC definition (`1 KiB = 1024 bytes`). Choose this
 /// constructor when you want binary units and the ergonomic `ByteSize` API.
 pub fn ByteSize::kib(size : UInt64) -> ByteSize {
-  { size: size * KIB }
+  { size: size * KIB, }
 }
 
 ///|
@@ -211,7 +223,7 @@ pub fn ByteSize::kib(size : UInt64) -> ByteSize {
 /// The input is interpreted in SI units, making it a good fit for disk, file,
 /// and transfer sizes that are normally reported in base-10 units.
 pub fn ByteSize::mb(size : UInt64) -> ByteSize {
-  { size: size * MB }
+  { size: size * MB, }
 }
 
 ///|
@@ -220,7 +232,7 @@ pub fn ByteSize::mb(size : UInt64) -> ByteSize {
 /// The input is interpreted in IEC units, which is useful for measurements that
 /// are naturally expressed as powers of two, such as memory sizes.
 pub fn ByteSize::mib(size : UInt64) -> ByteSize {
-  { size: size * MIB }
+  { size: size * MIB, }
 }
 
 ///|
@@ -229,7 +241,7 @@ pub fn ByteSize::mib(size : UInt64) -> ByteSize {
 /// This constructor uses SI scaling and returns a value that can be compared,
 /// formatted, or combined with other `ByteSize` values.
 pub fn ByteSize::gb(size : UInt64) -> ByteSize {
-  { size: size * GB }
+  { size: size * GB, }
 }
 
 ///|
@@ -238,7 +250,7 @@ pub fn ByteSize::gb(size : UInt64) -> ByteSize {
 /// This constructor uses IEC scaling and is useful when you want to preserve
 /// the distinction between binary sizes and decimal storage labels.
 pub fn ByteSize::gib(size : UInt64) -> ByteSize {
-  { size: size * GIB }
+  { size: size * GIB, }
 }
 
 ///|
@@ -247,7 +259,7 @@ pub fn ByteSize::gib(size : UInt64) -> ByteSize {
 /// Use this constructor for very large SI quantities when you still want to
 /// keep the value strongly typed as `ByteSize`.
 pub fn ByteSize::tb(size : UInt64) -> ByteSize {
-  { size: size * TB }
+  { size: size * TB, }
 }
 
 ///|
@@ -256,7 +268,7 @@ pub fn ByteSize::tb(size : UInt64) -> ByteSize {
 /// This constructor preserves IEC semantics for very large binary quantities
 /// while still returning a regular `ByteSize` wrapper.
 pub fn ByteSize::tib(size : UInt64) -> ByteSize {
-  { size: size * TIB }
+  { size: size * TIB, }
 }
 
 ///|
@@ -265,7 +277,7 @@ pub fn ByteSize::tib(size : UInt64) -> ByteSize {
 /// This is the SI counterpart to `ByteSize::pib` and is appropriate for
 /// extremely large base-10 byte quantities.
 pub fn ByteSize::pb(size : UInt64) -> ByteSize {
-  { size: size * PB }
+  { size: size * PB, }
 }
 
 ///|
@@ -274,7 +286,7 @@ pub fn ByteSize::pb(size : UInt64) -> ByteSize {
 /// This constructor uses IEC scaling for extremely large binary quantities and
 /// keeps the result available through the `ByteSize` API.
 pub fn ByteSize::pib(size : UInt64) -> ByteSize {
-  { size: size * PIB }
+  { size: size * PIB, }
 }
 
 ///|
@@ -316,19 +328,19 @@ pub fn ByteSize::debug_string(self : ByteSize) -> String {
 ///|
 /// Addition: ByteSize + ByteSize = ByteSize
 impl Add for ByteSize with fn add(self, rhs : ByteSize) -> ByteSize {
-  { size: rhs.size + self.size }
+  { size: rhs.size + self.size, }
 }
 
 ///|
 /// Subtraction: ByteSize - ByteSize = ByteSize
 impl Sub for ByteSize with fn sub(self, rhs : ByteSize) -> ByteSize {
-  { size: self.size - rhs.size }
+  { size: self.size - rhs.size, }
 }
 
 ///|
 /// Multiplication: ByteSize * ByteSize = ByteSize
 impl Mul for ByteSize with fn mul(self, rhs : ByteSize) -> ByteSize {
-  { size: rhs.size * self.size }
+  { size: rhs.size * self.size, }
 }
 
 ///|
@@ -389,7 +401,7 @@ test "test_display_formats" {
 
 ///|
 test "test_default" {
-  let default_size = ByteSize::{ size: 0UL }
+  let default_size = ByteSize::{ size: 0UL, }
   assert_eq(ByteSize::b(0), default_size)
 }
 
