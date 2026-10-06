@@ -12,12 +12,16 @@ pub enum Format {
   Si
   SiShort
 } derive(Debug)
+
+///|
 pub extend Format with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
 pub impl Show for Format with fn to_string(self) {
   repr(self)
 }
+
+///|
 pub extend Format with Show::{to_string, output}
 
 ///|
@@ -90,12 +94,16 @@ pub struct Display {
   byte_size : UInt64
   format : Format
 } derive(Debug)
+
+///|
 pub extend Display with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
 pub impl Show for Display with fn to_string(self) {
   self.to_string()
 }
+
+///|
 pub extend Display with Show::{output}
 
 ///|
@@ -104,7 +112,7 @@ pub extend Display with Show::{output}
 /// The provided `byte_size` is stored unchanged. Call `si`, `si_short`, or
 /// `iec_short` on the returned value when you want a different rendering style.
 pub fn Display::new(byte_size : UInt64) -> Display {
-  { byte_size, format: Iec }
+  { byte_size, format: Iec, }
 }
 
 ///|
@@ -113,7 +121,7 @@ pub fn Display::new(byte_size : UInt64) -> Display {
 /// This produces output such as `11.8 MiB`, with a separating space and the
 /// binary `iB` suffix.
 pub fn Display::iec(self : Display) -> Display {
-  { ..self, format: Iec }
+  { ..self, format: Iec, }
 }
 
 ///|
@@ -122,7 +130,7 @@ pub fn Display::iec(self : Display) -> Display {
 /// This produces compact output such as `11.8M`. The short form is convenient
 /// for narrow UI surfaces and shell output that is sorted with `sort -h`.
 pub fn Display::iec_short(self : Display) -> Display {
-  { ..self, format: IecShort }
+  { ..self, format: IecShort, }
 }
 
 ///|
@@ -131,7 +139,7 @@ pub fn Display::iec_short(self : Display) -> Display {
 /// This produces output such as `12.3 MB`, which matches the decimal unit
 /// system commonly used by storage devices and transfer rates.
 pub fn Display::si(self : Display) -> Display {
-  { ..self, format: Si }
+  { ..self, format: Si, }
 }
 
 ///|
@@ -140,7 +148,7 @@ pub fn Display::si(self : Display) -> Display {
 /// This produces compact decimal strings such as `12.3M`, which are useful
 /// when you want SI semantics but minimal visual noise.
 pub fn Display::si_short(self : Display) -> Display {
-  { ..self, format: SiShort }
+  { ..self, format: SiShort, }
 }
 
 ///|
@@ -205,12 +213,29 @@ pub fn Display::to_string(self : Display, precision? : Int = 1) -> String {
 }
 
 ///|
-/// Rounds a floating-point value to the requested number of decimal places.
+/// Rounds a floating-point value to the requested number of decimal places and
+/// renders it without unnecessary trailing zeros.
+///
+/// Rounding happens at the integer scale and the result is split with integer
+/// arithmetic, so the output never carries floating-point residue such as
+/// `9.999999` or `1.0000000002`.
 fn format_double_with_precision(value : Double, precision : Int) -> String {
-  // Simple implementation - in a real scenario you might want more sophisticated formatting
+  if precision <= 0 {
+    return @math.round(value).to_string()
+  }
   let multiplier = @math.pow(10.0, precision.to_double())
-  let rounded = @math.round(value * multiplier) / multiplier
-  rounded.to_string()
+  let scaled = @math.round(value * multiplier).to_int64()
+  let divider = multiplier.to_int64()
+  let whole = scaled / divider
+  let mut frac = (scaled % divider).to_string()
+  while frac.length() < precision {
+    frac = "0" + frac
+  }
+  let frac_trimmed = frac.trim_end(chars="0")
+  if frac_trimmed.is_empty() {
+    return whole.to_string()
+  }
+  "\{whole}.\{frac_trimmed}"
 }
 
 ///|
@@ -239,17 +264,17 @@ test "ideal_unit_selection_std_no_std_si" {
 
 ///|
 test "to_string_iec" {
-  let display = Display::{ byte_size: ByteSize::gib(1).as_u64(), format: Iec }
+  let display = Display::{ byte_size: ByteSize::gib(1).as_u64(), format: Iec, }
   assert_eq("1 GiB", display.to_string())
-  let display2 = Display::{ byte_size: ByteSize::gb(1).as_u64(), format: Iec }
+  let display2 = Display::{ byte_size: ByteSize::gb(1).as_u64(), format: Iec, }
   assert_eq("953.7 MiB", display2.to_string())
 }
 
 ///|
 test "to_string_si" {
-  let display = Display::{ byte_size: ByteSize::gib(1).as_u64(), format: Si }
+  let display = Display::{ byte_size: ByteSize::gib(1).as_u64(), format: Si, }
   assert_eq("1.1 GB", display.to_string())
-  let display2 = Display::{ byte_size: ByteSize::gb(1).as_u64(), format: Si }
+  let display2 = Display::{ byte_size: ByteSize::gb(1).as_u64(), format: Si, }
   assert_eq("1 GB", display2.to_string())
 }
 
@@ -294,7 +319,7 @@ fn assert_to_string(
   byte_size : ByteSize,
   format : Format,
 ) -> Unit raise {
-  let display = Display::{ byte_size: byte_size.as_u64(), format }
+  let display = Display::{ byte_size: byte_size.as_u64(), format, }
   assert_eq(expected, display.to_string())
 }
 
