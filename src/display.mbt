@@ -156,7 +156,7 @@ pub fn Display::si_short(self : Display) -> Display {
 ///
 /// This helper mirrors the format-selection logic without relying on logarithms,
 /// which makes it useful in restricted environments or for validation tests.
-pub fn ideal_unit_no_std(size : Double, unit : UInt64) -> Int {
+pub fn ideal_unit_no_std(size : Double, unit : UInt64) -> Int32 {
   let mut ideal_prefix = 0
   let mut ideal_size = size
   let unit_f = unit.to_double()
@@ -172,7 +172,7 @@ pub fn ideal_unit_no_std(size : Double, unit : UInt64) -> Int {
 
 ///|
 /// Calculates the same unit index as `ideal_unit_no_std` by using logarithms.
-fn ideal_unit_std(size : Double, unit_base : Double) -> Int {
+fn ideal_unit_std(size : Double, unit_base : Double) -> Int32 {
   let exp = (@math.ln(size) / unit_base).to_int()
   if exp == 0 {
     1
@@ -187,7 +187,7 @@ fn ideal_unit_std(size : Double, unit_base : Double) -> Int {
 /// Values smaller than the first unit are rendered as bytes, while larger
 /// values are promoted to the most suitable unit for the active `Format`.
 /// `precision` controls how many decimal places are kept after rounding.
-pub fn Display::to_string(self : Display, precision? : Int = 1) -> String {
+pub fn Display::to_string(self : Display, precision~ : Int32 = 1) -> String {
   let bytes = self.byte_size
   let unit = self.format.unit()
   let unit_base = self.format.unit_base()
@@ -219,7 +219,7 @@ pub fn Display::to_string(self : Display, precision? : Int = 1) -> String {
 /// Rounding happens at the integer scale and the result is split with integer
 /// arithmetic, so the output never carries floating-point residue such as
 /// `9.999999` or `1.0000000002`.
-fn format_double_with_precision(value : Double, precision : Int) -> String {
+fn format_double_with_precision(value : Double, precision : Int32) -> String {
   if precision <= 0 {
     return @math.round(value).to_string()
   }
