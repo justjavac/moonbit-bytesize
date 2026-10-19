@@ -56,18 +56,30 @@ pub struct ByteSize {
 } derive(Compare, Default, Eq, Hash, @debug.Debug)
 pub fn ByteSize::as_u64(Self) -> UInt64
 pub fn ByteSize::b(UInt64) -> Self
+pub fn ByteSize::compare(Self, Self) -> Int
 pub fn ByteSize::debug_string(Self) -> String
+pub fn ByteSize::default() -> Self
 pub fn ByteSize::display(Self) -> Display
+pub fn ByteSize::equal(Self, Self) -> Bool
 pub fn ByteSize::gb(UInt64) -> Self
 pub fn ByteSize::gib(UInt64) -> Self
+pub fn ByteSize::hash(Self) -> Int
+pub fn ByteSize::hash_combine(Self, Hasher) -> Unit
 pub fn ByteSize::kb(UInt64) -> Self
 pub fn ByteSize::kib(UInt64) -> Self
 pub fn ByteSize::mb(UInt64) -> Self
 pub fn ByteSize::mib(UInt64) -> Self
+pub fn ByteSize::not_equal(Self, Self) -> Bool
+pub fn ByteSize::op_ge(Self, Self) -> Bool
+pub fn ByteSize::op_gt(Self, Self) -> Bool
+pub fn ByteSize::op_le(Self, Self) -> Bool
+pub fn ByteSize::op_lt(Self, Self) -> Bool
+pub fn ByteSize::output(Self, &Logger) -> Unit
 pub fn ByteSize::pb(UInt64) -> Self
 pub fn ByteSize::pib(UInt64) -> Self
 pub fn ByteSize::tb(UInt64) -> Self
 pub fn ByteSize::tib(UInt64) -> Self
+pub fn ByteSize::to_repr(Self) -> @debug.Repr
 pub fn ByteSize::to_string(Self) -> String
 pub impl Show for ByteSize
 
@@ -78,8 +90,10 @@ pub struct Display {
 pub fn Display::iec(Self) -> Self
 pub fn Display::iec_short(Self) -> Self
 pub fn Display::new(UInt64) -> Self
+pub fn Display::output(Self, &Logger) -> Unit
 pub fn Display::si(Self) -> Self
 pub fn Display::si_short(Self) -> Self
+pub fn Display::to_repr(Self) -> @debug.Repr
 pub fn Display::to_string(Self, precision? : Int) -> String
 pub impl Show for Display
 
@@ -89,6 +103,9 @@ pub enum Format {
   Si
   SiShort
 } derive(@debug.Debug)
+pub fn Format::output(Self, &Logger) -> Unit
+pub fn Format::to_repr(Self) -> @debug.Repr
+pub fn Format::to_string(Self) -> String
 pub fn Format::unit(Self) -> UInt64
 pub fn Format::unit_base(Self) -> Double
 pub fn Format::unit_prefixes(Self) -> String
@@ -99,4 +116,3 @@ pub impl Show for Format
 // Type aliases
 
 // Traits
-
